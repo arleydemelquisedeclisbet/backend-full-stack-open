@@ -7,6 +7,9 @@ GET {{baseUrl}}/api/persons HTTP/1.1
 # get a person if exist
 GET {{baseUrl}}/api/persons/5 HTTP/1.1
 
+###
+# delete a person if exist
+DELETE {{baseUrl}}/api/persons/2 HTTP/1.1
 
 ###
 # get numbers of persons and date
