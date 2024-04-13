@@ -1,4 +1,6 @@
 import express from 'express'
+import idGenerator from './idGenerator.js'
+
 let datos = [
     {
         "id": 1,
@@ -48,6 +50,15 @@ app.get('/info', (_req, res) => {
     const message = `Phonebook has info for ${numberOfRegisters} people`
     const dateRequest = new Date()
     res.send(`${message} <br/><br/> ${dateRequest}`)
+})
+
+app.use(express.json())
+
+app.post('/api/persons', (req, res) => {
+    const { body: person } = req
+    const newPerson = { id: idGenerator(), ...person }
+    datos = datos.concat(newPerson)
+    res.status(201).send(newPerson)
 })
 
 const PORT = 3001
