@@ -17,7 +17,6 @@ export const idGenerator = () => {
 }
 
 export const isEmptyOrWhitespace = str => {
-    console.log('Str type of: ' + str, typeof str)
     // Verificar si el valor es null, undefined o no es una cadena
     if (str == null || str === undefined || typeof str !== 'string') {
         return true;

@@ -1,5 +1,6 @@
 import express from 'express'
 import { idGenerator, isEmptyOrWhitespace } from './utils.js'
+import morgan from 'morgan'
 
 let datos = [
     {
@@ -23,7 +24,21 @@ let datos = [
         "number": "39-23-6423122"
     }
 ]
+
 const app = express()
+
+app.use(express.json())
+
+morgan.token('body', (req) => {
+    if (Object.entries(req.body).length) {
+        return JSON.stringify(req.body)
+    }
+    return ' '
+})
+
+app.use(
+    morgan(':method :url :status :res[content-length] - :response-time ms :body')
+)
 
 app.get('/api/persons', (_req, res) => {
     res.send(datos)
@@ -52,8 +67,6 @@ app.get('/info', (_req, res) => {
     res.send(`${message} <br/><br/> ${dateRequest}`)
 })
 
-app.use(express.json())
-
 app.post('/api/persons', (req, res) => {
 
     const { body: person } = req
@@ -69,6 +82,10 @@ app.post('/api/persons', (req, res) => {
     const newPerson = { id: idGenerator(), ...person }
     datos = datos.concat(newPerson)
     res.status(201).send(newPerson)
+})
+
+app.use((_req, res) => {
+    return res.status(404).send({ error: "unknown endpoint" })
 })
 
 const PORT = 3001
