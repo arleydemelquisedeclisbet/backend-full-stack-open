@@ -1,6 +1,13 @@
 @baseUrl = http://localhost:3001
 
+# get all phonebook persons
 GET {{baseUrl}}/api/persons HTTP/1.1
 
 ###
+# get a person if exist
+GET {{baseUrl}}/api/persons/5 HTTP/1.1
+
+
+###
+# get numbers of persons and date
 GET {{baseUrl}}/info
