@@ -1,5 +1,5 @@
 import express from 'express'
-import idGenerator from './idGenerator.js'
+import { idGenerator, isEmptyOrWhitespace } from './utils.js'
 
 let datos = [
     {
@@ -55,7 +55,17 @@ app.get('/info', (_req, res) => {
 app.use(express.json())
 
 app.post('/api/persons', (req, res) => {
+
     const { body: person } = req
+
+    if (isEmptyOrWhitespace(person.name) || isEmptyOrWhitespace(person.number)) {
+        return res.status(400).send({ error: 'The name or number is missing' })
+    }
+
+    if (datos.find(p => p.name === person.name)) {
+        return res.status(400).send({ error: 'The name already exists in the phonebook' })       
+    }
+
     const newPerson = { id: idGenerator(), ...person }
     datos = datos.concat(newPerson)
     res.status(201).send(newPerson)
