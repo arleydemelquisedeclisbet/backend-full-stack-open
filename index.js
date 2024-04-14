@@ -1,7 +1,7 @@
 import express from 'express'
 import { idGenerator, isEmptyOrWhitespace } from './utils.js'
 import morgan from 'morgan'
-
+import cors from 'cors'
 let datos = [
     {
         "id": 1,
@@ -26,6 +26,8 @@ let datos = [
 ]
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.json())
 
@@ -88,7 +90,7 @@ app.use((_req, res) => {
     return res.status(404).send({ error: "unknown endpoint" })
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 
 app.listen(PORT, () => {
     console.info(`Servidor escuchando en el puerto: ${PORT}`)
