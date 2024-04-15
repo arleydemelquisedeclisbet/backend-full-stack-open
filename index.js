@@ -37,8 +37,8 @@ app.get('/api/persons/:id', (req, res) => {
         : res.status(404).send('Not found')
 })
 
-app.delete('/api/persons/:id', async (req, res) => {
-    
+app.delete('/api/persons/:id', async (req, res, next) => {
+
     const { id } = req.params
     
     try {    
@@ -46,7 +46,7 @@ app.delete('/api/persons/:id', async (req, res) => {
             ? res.status(204).end()
             : res.status(404).send('Not found')        
     } catch (error) {
-        console.error(error)
+        next(error)
     }
 })
 
@@ -83,8 +83,18 @@ app.post('/api/persons', async (req, res) => {
 
 })
 
+// Handle unknownEndpoint
 app.use((_req, res) => {
     return res.status(404).send({ error: "unknown endpoint" })
+})
+
+// Handle errors
+app.use((error, _idreq, res, next) => {
+    console.error('Error: ', error.name)
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id'})
+    }
+    next(error)
 })
 
 const PORT = process.env.PORT
