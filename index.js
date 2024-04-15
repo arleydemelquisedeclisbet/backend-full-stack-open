@@ -1,5 +1,5 @@
 import express from 'express'
-import { idGenerator, isEmptyOrWhitespace } from './utils.js'
+import { isEmptyOrWhitespace } from './utils.js'
 import morgan from 'morgan'
 import cors from 'cors'
 import Person from './models/person.js'
@@ -51,21 +51,30 @@ app.get('/info', (_req, res) => {
     res.send(`${message} <br/><br/> ${dateRequest}`)
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', async (req, res) => {
 
-    const { body: person } = req
+    const { body: { name, number } } = req
 
-    if (isEmptyOrWhitespace(person.name) || isEmptyOrWhitespace(person.number)) {
+    if (isEmptyOrWhitespace(name) || isEmptyOrWhitespace(number)) {
         return res.status(400).send({ error: 'The name or number is missing' })
     }
 
-    if (datos.find(p => p.name === person.name)) {
+    if ((await Person.find({ name })).length) {
         return res.status(400).send({ error: 'The name already exists in the phonebook' })       
     }
 
-    const newPerson = { id: idGenerator(), ...person }
-    datos = datos.concat(newPerson)
-    res.status(201).send(newPerson)
+    const newPerson = new Person({ name, number });
+
+    try {
+        await newPerson.save();
+        console.info(`Added ${name} number ${number} to phonebook`);
+        res.status(201).send(newPerson)
+    } catch (error) {
+        const message = `Error to save in notebook: ${error.message}`
+        console.error(message);
+        res.status(500).send(message)
+    }
+
 })
 
 app.use((_req, res) => {
