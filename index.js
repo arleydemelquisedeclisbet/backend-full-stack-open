@@ -64,7 +64,7 @@ app.get('/info', (_req, res) => {
     res.send(`${message} <br/><br/> ${dateRequest}`)
 })
 
-app.post('/api/persons', async (req, res) => {
+app.post('/api/persons', async (req, res, next) => {
 
     const { body: { name, number } } = req
 
@@ -83,9 +83,7 @@ app.post('/api/persons', async (req, res) => {
         console.info(`Added ${name} number ${number} to phonebook`);
         res.status(201).send(newPerson)
     } catch (error) {
-        const message = `Error to save in notebook: ${error.message}`
-        console.error(message);
-        res.status(500).send(message)
+        next(error)
     }
 
 })
@@ -96,7 +94,9 @@ app.put('/api/persons/:id', async (req, res, next) => {
     const { body: { name, number } } = req
 
     try {    
-        const newPerson =  await Person.findByIdAndUpdate(id, { name, number }, { new: true })
+        const newPerson =  await Person.findByIdAndUpdate(
+            id, { name, number }, { new: true, runValidators: true, context: 'query' }
+        )
         return newPerson
             ? res.send(newPerson)
             : res.status(404).send('Not found')        
@@ -116,7 +116,9 @@ app.use((_req, res) => {
 app.use((error, _idreq, res, next) => {
     console.error('Error: ', error.name)
     if (error.name === 'CastError') {
-        return res.status(400).send({ error: 'malformatted id'})
+        return res.status(400).send({ message: 'malformatted id'})
+    } else if (error.name === 'ValidationError') {
+        return res.status(400).send({ message: error.message })
     }
     next(error)
 })

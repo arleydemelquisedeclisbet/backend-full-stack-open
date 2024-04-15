@@ -11,7 +11,10 @@ try {
 }
 
 const personSchema = new mongoose.Schema({
-    name: String,
+    name:  { 
+        type: String, 
+        minLength: [3, 'the minimum allowed length is (3)'] 
+    },
     number: String,
 }).set("toJSON", {
     transform: (_document, returnedObject) => {
