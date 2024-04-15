@@ -23,6 +23,8 @@ app.use(
     morgan(':method :url :status :res[content-length] - :response-time ms :body')
 )
 
+//----------Init Rutes----------------//
+
 app.get('/api/persons', async (_req, res) => {
     const persons = await Person.find();
     res.send(persons)
@@ -82,6 +84,23 @@ app.post('/api/persons', async (req, res) => {
     }
 
 })
+
+app.put('/api/persons/:id', async (req, res, next) => {
+
+    const { id } = req.params
+    const { body: { name, number } } = req
+
+    try {    
+        const newPerson =  await Person.findByIdAndUpdate(id, { name, number }, { new: true })
+        return newPerson
+            ? res.send(newPerson)
+            : res.status(404).send('Not found')        
+    } catch (error) {
+        next(error)
+    }
+})
+
+//----------End Rutes----------------//
 
 // Handle unknownEndpoint
 app.use((_req, res) => {
