@@ -30,13 +30,18 @@ app.get('/api/persons', async (_req, res) => {
     res.send(persons)
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', async (req, res, next) => {
     const { id } = req.params
-    const personFound = datos.find(p => p.id === +id)
 
-    return personFound
-        ? res.send(personFound)
-        : res.status(404).send('Not found')
+    try {
+        const personFound = await Person.findById(id)
+    
+        return personFound
+            ? res.send(personFound)
+            : res.status(404).send('Not found')        
+    } catch (error) {
+        next(error)
+    }
 })
 
 app.delete('/api/persons/:id', async (req, res, next) => {
