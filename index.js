@@ -37,11 +37,17 @@ app.get('/api/persons/:id', (req, res) => {
         : res.status(404).send('Not found')
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', async (req, res) => {
+    
     const { id } = req.params
-    datos = datos.filter(p => p.id !== +id)
-
-    res.status(204).end()
+    
+    try {    
+        return await Person.findByIdAndDelete(id)
+            ? res.status(204).end()
+            : res.status(404).send('Not found')        
+    } catch (error) {
+        console.error(error)
+    }
 })
 
 app.get('/info', (_req, res) => {
