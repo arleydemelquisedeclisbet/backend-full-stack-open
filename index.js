@@ -68,10 +68,6 @@ app.post('/api/persons', async (req, res, next) => {
 
     const { body: { name, number } } = req
 
-    if (isEmptyOrWhitespace(name) || isEmptyOrWhitespace(number)) {
-        return res.status(400).send({ error: 'The name or number is missing' })
-    }
-
     if ((await Person.find({ name })).length) {
         return res.status(400).send({ error: 'The name already exists in the phonebook' })       
     }
