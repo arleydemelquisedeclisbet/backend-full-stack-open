@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-mongoose.set("strictQuery", false);
+mongoose.set('strictQuery', false);
 
 try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.info("Conectado a MongoDB");
+    console.info('Conectado a MongoDB');
 } catch (error) {
-    console.error("No se pudo conectar a la base de datos: ", error);
+    console.error('No se pudo conectar a la base de datos: ', error);
     process.exit(1);
 }
 
@@ -27,7 +27,7 @@ const personSchema = new mongoose.Schema({
         },
         required: [true, 'is required']
     }
-}).set("toJSON", {
+}).set('toJSON', {
     transform: (_document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
@@ -35,4 +35,4 @@ const personSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.model("Person", personSchema);
+export default mongoose.model('Person', personSchema);
