@@ -1,7 +1,8 @@
 import mongoose from 'mongoose'
+import { error as loggerError, info } from './utils/logger'
 
 if (process.argv.length < 3) {
-    console.error('Give password as argument')
+    loggerError('Give password as argument')
     process.exit(1)
 }
 
@@ -21,7 +22,7 @@ const Person = mongoose.model('Person', personSchema)
 try {
     await mongoose.connect(url)
 } catch (error) {
-    console.error('No se pudo conectar a la base de datos: ', error)
+    loggerError('No se pudo conectar a la base de datos: ', error)
     process.exit(1)
 }
 
@@ -32,9 +33,9 @@ if (process.argv.length === 3) {
     const persons = await Person.find()
 
     if (persons.length) {
-        console.info('Phonebook:')
+        info('Phonebook:')
         persons.forEach(p => {
-            console.info(`${p.name} ${p.number}`)
+            info(`${p.name} ${p.number}`)
         })
     }
     mongoose.connection.close()
@@ -49,9 +50,9 @@ if (process.argv.length === 5) {
 
     try {
         await person.save()
-        console.info(`Added ${name} number ${number} to phonebook`)
+        info(`Added ${name} number ${number} to phonebook`)
     } catch (error) {
-        console.error('Error to save in notebook: ', error)
+        loggerError('Error to save in notebook: ', error)
     } finally {
         mongoose.connection.close()
     }
