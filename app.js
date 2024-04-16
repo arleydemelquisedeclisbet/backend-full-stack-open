@@ -2,7 +2,9 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 import personsRouter from './controllers/persons.js'
+import blogsRouter from './controllers/blogs.js'
 import { unknownEndpoint, errorHandler, recoverBody } from './utils/middlewar.js'
+import _mongoose from './models/index.js'
 
 const app = express()
 
@@ -16,6 +18,8 @@ app.use(
 )
 // Router persons
 app.use('/api/persons', personsRouter)
+// Router blogs
+app.use('/api/blogs', blogsRouter)
 // Handle unknownEndpoint
 app.use(unknownEndpoint)
 // Handle errors

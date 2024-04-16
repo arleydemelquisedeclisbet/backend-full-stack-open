@@ -1,0 +1,41 @@
+@baseUrl = http://localhost:3001/api/blogs
+# @baseUrl = https://backend-full-stack-open.onrender.com
+
+# get all blogs
+GET {{baseUrl}} HTTP/1.1
+
+###
+# get a blog if exist
+GET {{baseUrl}}/661ef46ab455dd55a9e36b6e HTTP/1.1
+
+###
+# delete a blog if exist
+DELETE {{baseUrl}}/661ef46ab455dd55a9e36b6e HTTP/1.1
+
+###
+# get numbers of blogs and date
+GET {{baseUrl}}/info
+
+###
+# post a new blog
+POST {{baseUrl}} HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Sample title",
+    "author": "Sample author",
+    "url": "www.sample.com",
+    "likes": 0
+}
+
+###
+# Update a blog
+PUT {{baseUrl}}/661ef4d6b455dd55a9e36b76 HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Sample title2",
+    "author": "Sample author2",
+    "url": "www.sample2.com",
+    "likes": 15
+}
