@@ -1,5 +1,5 @@
 import { test as bunTest, expect, describe } from 'bun:test'
-import { totalLikes, favoriteBlog, mostBlogs } from '../../utils/list_helper.js'
+import { totalLikes, favoriteBlog, mostBlogs, mostLikes } from '../../utils/list_helper.js'
 import blogs from '../blogsList.js'
 
 describe('total likes', () => {
@@ -35,6 +35,15 @@ describe('most blogs', () => {
     bunTest('get the author with the most blogs, get ({ author:string, blogs:number })', () => {
         const result = mostBlogs(blogs)
         const expected = { author: 'Robert C. Martin', blogs: 3 }
+        expect(result).toStrictEqual(expected)
+    })
+})
+
+describe('most likes', () => {
+
+    bunTest('get the author, whose blog posts have the largest amount of likes, get ({ author:string, likes:number })', () => {
+        const result = mostLikes(blogs)
+        const expected = { author: 'Edsger W. Dijkstra', likes: 17 }
         expect(result).toStrictEqual(expected)
     })
 })

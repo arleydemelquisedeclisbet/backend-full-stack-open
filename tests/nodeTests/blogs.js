@@ -1,6 +1,6 @@
 import { test as nodeTest, describe } from 'node:test'
 import assert from 'node:assert'
-import { totalLikes, favoriteBlog, mostBlogs } from '../../utils/list_helper.js'
+import { totalLikes, favoriteBlog, mostBlogs, mostLikes } from '../../utils/list_helper.js'
 import blogs from '../blogsList.js'
 
 describe('total likes', () => {
@@ -31,12 +31,20 @@ describe('favorite blog', () => {
     })
 })
 
-
 describe('most blogs', () => {
 
     nodeTest('get the author with the most blogs, get ({ author:string, blogs:number })', () => {
         const result = mostBlogs(blogs)
         const expect = { author: 'Robert C. Martin', blogs: 3 }
+        assert.deepStrictEqual(result, expect)
+    })
+})
+
+describe('most likes', () => {
+
+    nodeTest('get the author, whose blog posts have the largest amount of likes, get ({ author:string, likes:number })', () => {
+        const result = mostLikes(blogs)
+        const expect = { author: 'Edsger W. Dijkstra', likes: 17 }
         assert.deepStrictEqual(result, expect)
     })
 })
