@@ -24,7 +24,7 @@
     "start:bun": "bun .",
     "dev:bun": "bun --watch .",
     "lint": "eslint .",
-    "test": "node --test tests/nodeTests/*.test.js",
-    "test:bun": "bun test ./tests/bunTests/dummy.test.js"
+    "test": "node --test tests/nodeTests/*",
+    "test:bun": "bun test ./tests/bunTests/*"
   }
 }
