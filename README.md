@@ -68,3 +68,44 @@ To run dev mode:
 ```bash
 bun dev:bun
 ```
+
+#
+# TESTS
+
+## To run with npm
+
+To run all:
+
+```bash
+npm run test && npm run test:bun
+```
+
+To run only tests implemented with node
+```bash
+npm run test
+```
+
+To run only tests implemented with bun
+```bash
+npm run test:bun
+```
+
+## To run with bun
+
+To run all:
+
+```bash
+bun run test && bun run test:bun
+```
+
+To run only tests implemented with node
+```bash
+bun run test
+```
+
+To run only tests implemented with bun
+```bash
+bun run test:bun
+```
+
+

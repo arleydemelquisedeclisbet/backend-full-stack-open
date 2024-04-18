@@ -23,6 +23,8 @@
     "dev": "nodemon .",
     "start:bun": "bun .",
     "dev:bun": "bun --watch .",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "node --test tests/nodeTests/*.test.js",
+    "test:bun": "bun test ./tests/bunTests/dummy.test.js"
   }
 }
