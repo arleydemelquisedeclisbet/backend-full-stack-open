@@ -1,6 +1,6 @@
 import { Router } from "express"
-import Blog from "../models/blog"
-import { info } from "../utils/logger"
+import Blog from "../models/blog.js"
+import { info } from "../utils/logger.js"
 
 const blogsRouter = Router()
 

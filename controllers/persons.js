@@ -1,6 +1,6 @@
 import { Router } from "express"
-import Person from "../models/person"
-import { info } from "../utils/logger"
+import Person from "../models/person.js"
+import { info } from "../utils/logger.js"
 
 const personsRouter = Router()
 
