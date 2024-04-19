@@ -4,6 +4,7 @@
   "module": "index.js",
   "dependencies": {
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongoose": "^8.3.1",
@@ -20,12 +21,12 @@
     "nodemon": "^3.1.0"
   },
   "scripts": {
-    "start": "node .",
-    "dev": "nodemon .",
-    "start:bun": "bun .",
-    "dev:bun": "bun --watch .",
-    "lint": "eslint .",
-    "test": "node --test tests/nodeTests/*",
-    "test:bun": "bun test ./tests/bunTests/*"
+    "start": "cross-env NODE_ENV=production node .",
+    "dev": "cross-env NODE_ENV=development nodemon .",
+    "test": "cross-env NODE_ENV=test node --test tests/nodeTests/*",
+    "start:bun": "NODE_ENV=production bun .",
+    "dev:bun": "NODE_ENV=development bun --watch .",
+    "test:bun": "NODE_ENV=test bun test ./tests/bunTests/*",
+    "lint": "eslint ."
   }
 }
