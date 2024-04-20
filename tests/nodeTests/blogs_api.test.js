@@ -151,6 +151,27 @@ describe('Testing blogs api', () => {
         })
     })
 
+    describe('update of a blog ', () => {
+        
+        test('succeeds with valid data', async () => {
+
+            const { body: blogs } = await api.get('/api/blogs')
+            const [, blogToUpdate ] = blogs
+
+            const newBlog = { title: 'Last blog', author: 'Lili', url: 'www.last.com', likes: 5 }
+
+            const { body: blogUpdated } = await api
+                .put(`/api/blogs/${blogToUpdate.id}`).send(newBlog)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+    
+            const { body: blogAfter } = await api.get(`/api/blogs/${blogToUpdate.id}`)
+    
+            assert.strictEqual(blogAfter.likes, newBlog.likes)
+            assert.deepStrictEqual(blogAfter, blogUpdated)
+        })
+    })
+
     after(async () => {
         await mongoose.connection.close()
     })

@@ -159,6 +159,44 @@ describe('Testing nothebook api', () => {
         })
     })
 
+    describe('update of a person in the phonebook', () => {
+        
+        bunTest('succeeds with valid data', async () => {
+
+            const { body: persons } = await api.get('/api/persons')
+            const [, personToUpdate ] = persons
+
+            const newPerson = { name: personToUpdate.name, number: '444-5667777' }
+            
+            const { body: personUpdated } = await api
+                .put(`/api/persons/${personToUpdate.id}`).send(newPerson)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+    
+            const { body: personAfter } = await api.get(`/api/persons/${personToUpdate.id}`)
+    
+            expect(personAfter.number).toEqual(newPerson.number)
+            expect(personAfter).toStrictEqual(personUpdated)
+        })
+    
+        bunTest('when the number has invalid format fails with status code 400', async () => {
+        
+            const { body: persons } = await api.get('/api/persons')
+            const [ personToUpdate ] = persons
+
+            const newPerson = { name: personToUpdate.name, number: '75849393883' }
+            
+            await api
+                .put(`/api/persons/${personToUpdate.id}`).send(newPerson)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+    
+            const { body: personsAfter } = await api.get('/api/persons')
+    
+            expect(personsAfter.length).toEqual(initialPersons.length)
+        })
+    })
+
     afterAll(async () => {
         await mongoose.connection.close()
     })
