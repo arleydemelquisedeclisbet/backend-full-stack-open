@@ -133,6 +133,32 @@ describe('Testing nothebook api', () => {
         });
     })
 
+    describe('deletion of a person', () => {
+        bunTest('succeeds with status code 204 if id is valid', async () => {
+            const { body: persons } = await api.get('/api/persons')
+            const personToDelete = persons[0]
+
+            await api
+                .delete(`/api/persons/${personToDelete.id}`)
+                .expect(204)
+
+            const { body: personsAtEnd } = await api.get('/api/persons')
+
+            expect(personsAtEnd.length).toBe(persons.length - 1)
+
+            const names = personsAtEnd.map(r => r.name)
+            expect(names.includes(personToDelete.name)).toBe(false)
+        })
+
+        bunTest('fails with statuscode 404 if person does not exist', async () => {
+            const validNonexistingId = await nonExistingId()
+
+            await api
+                .delete(`/api/persons/${validNonexistingId}`)
+                .expect(404)
+        })
+    })
+
     afterAll(async () => {
         await mongoose.connection.close()
     })

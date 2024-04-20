@@ -124,6 +124,33 @@ describe('Testing blogs api', () => {
         })
     })
 
+    describe('deletion of a blog', () => {
+        test('succeeds with status code 204 if id is valid', async () => {
+
+            const { body: blogs } = await api.get('/api/blogs')
+            const blogToDelete = blogs[0]
+
+            await api
+                .delete(`/api/blogs/${blogToDelete.id}`)
+                .expect(204)
+
+            const { body: blogsAtEnd } = await api.get('/api/blogs')
+
+            assert.strictEqual(blogsAtEnd.length, blogs.length - 1)
+
+            const titles = blogsAtEnd.map(r => r.title)
+            assert(!titles.includes(blogToDelete.title))
+        })
+
+        test('fails with statuscode 404 if blog does not exist', async () => {
+            const validNonexistingId = await nonExistingId()
+
+            await api
+                .delete(`/api/blogs/${validNonexistingId}`)
+                .expect(404)
+        })
+    })
+
     after(async () => {
         await mongoose.connection.close()
     })
