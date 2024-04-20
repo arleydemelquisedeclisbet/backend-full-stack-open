@@ -3,94 +3,138 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../../app.js'
 import Person from '../../models/person.js'
+import { initialPersons, nonExistingId } from '../test_helper.js'
 
 const api = supertest(app)
-
-const initialPersons = [{ name: 'Isaac', number: '43-8939393993', }, { name: 'Wilmar', number: '231-534545353', }]
-const personToAdd = { name: 'Lili', number: '444-5667777' }
-const withRepeatedName = { name: 'Isaac', number: '444-5667777' }
-const withIncompleteName = { name: 'Is', number: '444-5667777' }
-const withMalformedNumber = { name: 'NameOk', number: '75849393883' }
-const { body: persons } = await api.get('/api/persons')
-const personsBefore = persons.length
 
 describe('Testing nothebook api', () => {
 
     beforeEach(async () => {
         await Person.deleteMany({})
-        let personObject = new Person(initialPersons[0])
-        await personObject.save()
-        personObject = new Person(initialPersons[1])
-        await personObject.save()
+        Person.insertMany(initialPersons)
     })
 
-    bunTest('persons are returned as json', async () => {
-        await api
-            .get('/api/persons')
-            .expect(200)
-            .expect('Content-Type', /application\/json/)
+    describe('when there is initially some blogs saved', () => {
+        bunTest('persons are returned as json', async () => {
+            await api
+                .get('/api/persons')
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+        })
+
+        bunTest('all persons are returned', async () => {
+            const { body: persons } = await api.get('/api/persons')
+            expect(persons.length).toEqual(initialPersons.length)
+        })
+
+        bunTest('a specific person is within the returned phonebook', async () => {
+            const { body: blogs } = await api.get('/api/persons')
+
+            const titles = blogs.map(blog => blog.name)
+            expect(titles.includes('W. Dijkstra')).toBe(true)
+        })
     })
+
+    describe('viewing a specific person', async () => {
+        bunTest('succeeds with a valid id', async () => {
+
+            const { body: personsAsStart } = await api.get('/api/persons')
+
+            const personExpected = personsAsStart[0]
+
+            const { body: personResult } = await api
+                .get(`/api/persons/${personExpected.id}`)
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+
+            expect(personResult).toStrictEqual(personExpected)
+        })
+
+        bunTest('fails with statuscode 404 if blog does not exist', async () => {
+            const validNonexistingId = await nonExistingId()
+
+            await api
+                .get(`/api/persons/${validNonexistingId}`)
+                .expect(404)
+        })
+
+        bunTest('fails with statuscode 400 id is invalid', async () => {
+
+            await api
+                .get(`/api/persons/invalidId`)
+                .expect(400)
+        })
+    })
+
+    describe('addition of a new person in the phonebook', () => {
+        
+        bunTest('succeeds with valid data', async () => {
+
+            const personToAdd = { name: 'Lili', number: '444-5667777' }
+
+            await api
+                .post('/api/persons').send(personToAdd)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
     
-    bunTest('there are two persons', async () => {
-        expect(persons.length).toEqual(2)
-    })
-
-    bunTest('the unique identifier property of the person is named id', async () => {
-        const [ person ] = persons
-        expect(person._id).toBeUndefined()
-        expect(person).toHaveProperty('id')
-    });
-
-    bunTest('creates a new person in phonebook', async () => {
-            
-        await api
-            .post('/api/persons').send(personToAdd)
-            .expect(201)
-            .expect('Content-Type', /application\/json/)
-        
-        const { body: personsAfter } = await api.get('/api/persons')
-
-        expect(personsAfter.length).toEqual(personsBefore + 1)
-    })
-
-    bunTest('doesn`t create a person whe the name is repeated', async () => {
-            
-        await api
-            .post('/api/persons').send(withRepeatedName)
-            .expect(400)
-            .expect('Content-Type', /application\/json/)
-        
-        const { body: personsAfter } = await api.get('/api/persons')
-
-        expect(personsAfter.length).toEqual(personsBefore)
-    })
-
-    bunTest('name must be at least 3 characters long', async () => {
-            
-        await api
-            .post('/api/persons').send(withIncompleteName)
-            .expect(400)
-            .expect('Content-Type', /application\/json/)
-        
-        const { body: personsAfter } = await api.get('/api/persons')
-
-        expect(personsAfter.length).toEqual(personsBefore)
-
-    })
+            const { body: personsAfter } = await api.get('/api/persons')
     
-    bunTest('phone number must be a valid format', async () => {
-            
-        await api
-            .post('/api/persons').send(withMalformedNumber)
-            .expect(400)
-            .expect('Content-Type', /application\/json/)
-        
-        const { body: personsAfter } = await api.get('/api/persons')
+            expect(personsAfter.length).toEqual(initialPersons.length + 1)
+        })
 
-        expect(personsAfter.length).toEqual(personsBefore)
-    })
+        bunTest('when the person name is repeated fails with status code 400', async () => {
+            const { body: persons } = await api.get('/api/persons')
     
+            const [, withRepeatedName] = persons
+            await api
+                .post('/api/persons').send(withRepeatedName)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+    
+            const { body: personsAfter } = await api.get('/api/persons')
+    
+            expect(personsAfter.length).toEqual(initialPersons.length)
+        })
+
+        bunTest('when the name is less than 3 characters fails with status code 400', async () => {
+
+            const withIncompleteName = { name: 'Is', number: '444-5667777' }
+    
+            await api
+                .post('/api/persons').send(withIncompleteName)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+    
+            const { body: personsAfter } = await api.get('/api/persons')
+    
+            expect(personsAfter.length).toEqual(initialPersons.length)
+    
+        })
+    
+        bunTest('when the number has invalid format fails with status code 400', async () => {
+    
+            const withMalformedNumber = { name: 'NameOk', number: '75849393883' }
+    
+            await api
+                .post('/api/persons').send(withMalformedNumber)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+    
+            const { body: personsAfter } = await api.get('/api/persons')
+    
+            expect(personsAfter.length).toEqual(initialPersons.length)
+        })
+    
+        bunTest('the unique identifier property of the person is named id', async () => {
+            const { body: persons } = await api.get('/api/persons')
+            const [person] = persons
+            expect(person._id).toBeUndefined()
+            expect(person).toHaveProperty('id')
+        });
+    })
+
     afterAll(async () => {
         await mongoose.connection.close()
     })
+    
 })
