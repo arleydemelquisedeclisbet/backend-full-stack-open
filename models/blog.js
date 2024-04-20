@@ -12,7 +12,10 @@ const blogSchema = new mongoose.Schema({
         required: [true, 'is required']
     },
     url: String,
-    likes: Number
+    likes: {
+        type: Number,
+        default: 0
+    }
 }).set('toJSON', {
     transform: (_document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();

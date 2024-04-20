@@ -47,6 +47,21 @@ describe('Testing blogs api', () => {
         assert.equal(blogsAfter.length, blogsBefore + 1)
     })
     
+    test('default value to likes is zero', async () => {
+    
+        const newBlog = { title: 'Other blog', author: 'NNN', url: 'www.nnn.com' }
+
+        assert.ok(!newBlog.hasOwnProperty('likes'))
+        
+        const { body: blogAdded } = await api
+            .post('/api/blogs').send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        
+        assert.ok(blogAdded.hasOwnProperty('likes'))
+        assert.equal(blogAdded.likes, 0)
+    })
+    
     beforeEach(async () => {
         await Blog.deleteMany({})
         let blogObject = new Blog(initialBlogs[0])
