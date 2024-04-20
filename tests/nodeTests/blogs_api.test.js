@@ -62,6 +62,23 @@ describe('Testing blogs api', () => {
         assert.equal(blogAdded.likes, 0)
     })
     
+    test('title and url are required', async () => {
+    
+        const blogWithoutTitle = { author: 'NNN', url: 'www.nnn.com' }
+        const blogWithoutUrl = { title: 'NNN', author: 'NNN' }
+        
+        await api
+            .post('/api/blogs').send(blogWithoutTitle)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)        
+        
+        await api
+            .post('/api/blogs').send(blogWithoutUrl)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+        
+    })
+    
     beforeEach(async () => {
         await Blog.deleteMany({})
         let blogObject = new Blog(initialBlogs[0])

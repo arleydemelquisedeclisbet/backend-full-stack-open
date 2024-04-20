@@ -11,7 +11,10 @@ const blogSchema = new mongoose.Schema({
         minLength: [3, 'the minimum allowed length is (3)'],
         required: [true, 'is required']
     },
-    url: String,
+    url: {
+        type: String,
+        required: [true, 'is required']
+    },
     likes: {
         type: Number,
         default: 0
