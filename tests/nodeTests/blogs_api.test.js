@@ -29,6 +29,23 @@ describe('Testing blogs api', () => {
         assert.ok(blog.hasOwnProperty('id'))
         assert.ok(!blog.hasOwnProperty('_id'))
     })
+
+    test('creates a new blog post', async () => {
+
+        const { body: blogs } = await api.get('/api/blogs')
+        const blogsBefore = blogs.length
+    
+        const newBlog = { title: 'Last blog', author: 'Lili', url: 'www.last.com', likes: 0 }
+        
+        await api
+            .post('/api/blogs').send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        
+        const { body: blogsAfter } = await api.get('/api/blogs')
+
+        assert.equal(blogsAfter.length, blogsBefore + 1)
+    })
     
     beforeEach(async () => {
         await Blog.deleteMany({})
