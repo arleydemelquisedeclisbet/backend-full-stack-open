@@ -19,8 +19,15 @@ describe('Testing blogs api', () => {
     })
     
     test('there are two blogs', async () => {
-        const { body } = await api.get('/api/blogs')
-        assert.strictEqual(body.length, 2)
+        const { body: blogs } = await api.get('/api/blogs')
+        assert.strictEqual(blogs.length, 2)
+    })
+    
+    test('the unique identifier property of the blog posts is named id', async () => {
+        const { body: blogs } = await api.get('/api/blogs')
+        const [ blog ] = blogs
+        assert.ok(blog.hasOwnProperty('id'))
+        assert.ok(!blog.hasOwnProperty('_id'))
     })
     
     beforeEach(async () => {

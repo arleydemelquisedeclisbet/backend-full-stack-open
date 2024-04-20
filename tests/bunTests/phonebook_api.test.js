@@ -21,6 +21,13 @@ describe('Testing nothebook api', () => {
         const { body } = await api.get('/api/persons')
         expect(body.length).toEqual(2)
     })
+
+    bunTest('the unique identifier property of the person is named id', async () => {
+        const { body } = await api.get('/api/persons')
+        const person = body[0]
+        expect(person._id).toBeUndefined();
+        expect(person).toHaveProperty('id');
+    });
     
     beforeEach(async () => {
         await Person.deleteMany({})
