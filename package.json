@@ -18,7 +18,8 @@
     "@types/morgan": "^1.9.9",
     "eslint": "^9.0.0",
     "globals": "^15.0.0",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "supertest": "^6.3.4"
   },
   "scripts": {
     "start": "cross-env NODE_ENV=production node .",
