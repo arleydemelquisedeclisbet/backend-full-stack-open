@@ -1,6 +1,6 @@
 import { test as bunTest, expect, describe } from 'bun:test'
 import { totalLikes, favoriteBlog, mostBlogs, mostLikes } from '../../utils/list_helper.js'
-import blogs from '../blogsList.js'
+import { initialBlogs as blogs } from '../test_helper.js'
 
 describe('total likes', () => {
 

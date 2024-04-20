@@ -1,7 +1,7 @@
 import { test as nodeTest, describe } from 'node:test'
 import assert from 'node:assert'
 import { totalLikes, favoriteBlog, mostBlogs, mostLikes } from '../../utils/list_helper.js'
-import blogs from '../blogsList.js'
+import { initialBlogs as blogs } from '../test_helper.js'
 
 describe('total likes', () => {
 
