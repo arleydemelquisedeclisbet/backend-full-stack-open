@@ -12,10 +12,12 @@ app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
 
-morgan.token('body', recoverBody)
-app.use(
-    morgan(':method :url :status :res[content-length] - :response-time ms :body')
-)
+if (process.env.NODE_ENV !== 'test') {
+    morgan.token('body', recoverBody)
+    app.use(
+        morgan(':method :url :status :res[content-length] - :response-time ms :body')
+    )
+}
 // Router persons
 app.use('/api/persons', personsRouter)
 // Router blogs
