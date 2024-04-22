@@ -1,4 +1,5 @@
 import Blog from "../models/blog.js"
+import Person from "../models/person.js"
 
 export const initialBlogs = [
     {
@@ -85,4 +86,24 @@ export const nonExistingId = async () => {
     await blog.deleteOne({ _id })
 
     return _id.toString()
+}
+
+export const getBlogsInDb = async () => {
+    const blogs = await Blog.find()
+    return blogs.map(blog => blog.toJSON())
+}
+
+export const getBlogByIdInDb = async id => {
+    const blog = await Blog.findById(id)
+    return blog.toJSON()
+}
+
+export const getPersonsInDb = async () => {
+    const persons = await Person.find()
+    return persons.map(person => person.toJSON())
+}
+
+export const getPersonByIdInDb = async id => {
+    const person = await Person.findById(id)
+    return person.toJSON()
 }

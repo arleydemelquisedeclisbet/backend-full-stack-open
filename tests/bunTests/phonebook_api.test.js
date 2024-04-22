@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../../app.js'
 import Person from '../../models/person.js'
-import { initialPersons, nonExistingId } from '../test_helper.js'
+import { initialPersons, nonExistingId, getPersonsInDb, getPersonByIdInDb } from '../test_helper.js'
 
 const api = supertest(app)
 
@@ -11,7 +11,7 @@ describe('Testing nothebook api', () => {
 
     beforeEach(async () => {
         await Person.deleteMany({})
-        Person.insertMany(initialPersons)
+        await Person.insertMany(initialPersons)
     })
 
     describe('when there is initially some blogs saved', () => {
@@ -38,7 +38,7 @@ describe('Testing nothebook api', () => {
     describe('viewing a specific person', async () => {
         bunTest('succeeds with a valid id', async () => {
 
-            const { body: personsAsStart } = await api.get('/api/persons')
+            const personsAsStart = await getPersonsInDb()
 
             const personExpected = personsAsStart[0]
 
@@ -77,21 +77,22 @@ describe('Testing nothebook api', () => {
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
     
-            const { body: personsAfter } = await api.get('/api/persons')
+            const personsAfter = await getPersonsInDb()
     
             expect(personsAfter.length).toEqual(initialPersons.length + 1)
         })
 
         bunTest('when the person name is repeated fails with status code 400', async () => {
-            const { body: persons } = await api.get('/api/persons')
+
+            const personsAsStart = await getPersonsInDb()
     
-            const [, withRepeatedName] = persons
+            const [, withRepeatedName] = personsAsStart
             await api
                 .post('/api/persons').send(withRepeatedName)
                 .expect(400)
                 .expect('Content-Type', /application\/json/)
     
-            const { body: personsAfter } = await api.get('/api/persons')
+            const personsAfter = await getPersonsInDb()
     
             expect(personsAfter.length).toEqual(initialPersons.length)
         })
@@ -105,7 +106,7 @@ describe('Testing nothebook api', () => {
                 .expect(400)
                 .expect('Content-Type', /application\/json/)
     
-            const { body: personsAfter } = await api.get('/api/persons')
+            const personsAfter = await getPersonsInDb()
     
             expect(personsAfter.length).toEqual(initialPersons.length)
     
@@ -120,31 +121,31 @@ describe('Testing nothebook api', () => {
                 .expect(400)
                 .expect('Content-Type', /application\/json/)
     
-            const { body: personsAfter } = await api.get('/api/persons')
+            const personsAfter = await getPersonsInDb()
     
             expect(personsAfter.length).toEqual(initialPersons.length)
         })
     
         bunTest('the unique identifier property of the person is named id', async () => {
-            const { body: persons } = await api.get('/api/persons')
+            const persons = await getPersonsInDb()
             const [person] = persons
             expect(person._id).toBeUndefined()
             expect(person).toHaveProperty('id')
-        });
+        })
     })
 
     describe('deletion of a person', () => {
         bunTest('succeeds with status code 204 if id is valid', async () => {
-            const { body: persons } = await api.get('/api/persons')
-            const personToDelete = persons[0]
+            const personsAsStart = await getPersonsInDb()
+            const personToDelete = personsAsStart[0]
 
             await api
                 .delete(`/api/persons/${personToDelete.id}`)
                 .expect(204)
 
-            const { body: personsAtEnd } = await api.get('/api/persons')
+                const personsAtEnd = await getPersonsInDb()
 
-            expect(personsAtEnd.length).toBe(persons.length - 1)
+            expect(personsAtEnd.length).toBe(personsAsStart.length - 1)
 
             const names = personsAtEnd.map(r => r.name)
             expect(names.includes(personToDelete.name)).toBe(false)
@@ -163,7 +164,7 @@ describe('Testing nothebook api', () => {
         
         bunTest('succeeds with valid data', async () => {
 
-            const { body: persons } = await api.get('/api/persons')
+            const persons = await getPersonsInDb()
             const [, personToUpdate ] = persons
 
             const newPerson = { name: personToUpdate.name, number: '444-5667777' }
@@ -173,7 +174,7 @@ describe('Testing nothebook api', () => {
                 .expect(200)
                 .expect('Content-Type', /application\/json/)
     
-            const { body: personAfter } = await api.get(`/api/persons/${personToUpdate.id}`)
+            const personAfter = await getPersonByIdInDb(personToUpdate.id)
     
             expect(personAfter.number).toEqual(newPerson.number)
             expect(personAfter).toStrictEqual(personUpdated)
@@ -181,7 +182,7 @@ describe('Testing nothebook api', () => {
     
         bunTest('when the number has invalid format fails with status code 400', async () => {
         
-            const { body: persons } = await api.get('/api/persons')
+            const persons = await getPersonsInDb()
             const [ personToUpdate ] = persons
 
             const newPerson = { name: personToUpdate.name, number: '75849393883' }
@@ -191,7 +192,7 @@ describe('Testing nothebook api', () => {
                 .expect(400)
                 .expect('Content-Type', /application\/json/)
     
-            const { body: personsAfter } = await api.get('/api/persons')
+            const personsAfter = await getPersonsInDb()
     
             expect(personsAfter.length).toEqual(initialPersons.length)
         })

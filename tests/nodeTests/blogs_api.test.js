@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../../app.js'
 import Blog from '../../models/blog.js'
-import { initialBlogs, nonExistingId } from '../test_helper.js'
+import { initialBlogs, nonExistingId, getBlogsInDb, getBlogByIdInDb } from '../test_helper.js'
 
 const api = supertest(app)
 
@@ -41,7 +41,7 @@ describe('Testing blogs api', () => {
     describe('viewing a specific blog', async () => {
 
         test('succeeds with a valid id', async () => {
-            const { body: blogsAsStart } = await api.get('/api/blogs')
+            const blogsAsStart = await getBlogsInDb()
 
             const blogExpected = blogsAsStart[0]
 
@@ -79,7 +79,7 @@ describe('Testing blogs api', () => {
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
 
-            const { body: blogsAfter } = await api.get('/api/blogs')
+            const blogsAfter = await getBlogsInDb()
 
             assert.equal(blogsAfter.length, initialBlogs.length + 1)
         })
@@ -117,7 +117,7 @@ describe('Testing blogs api', () => {
         })
 
         test('the unique identifier property of the blog posts is named id', async () => {
-            const { body: blogs } = await api.get('/api/blogs')
+            const blogs = await getBlogsInDb()
             const [blog] = blogs
             assert.ok(blog.hasOwnProperty('id'))
             assert.ok(!blog.hasOwnProperty('_id'))
@@ -127,14 +127,14 @@ describe('Testing blogs api', () => {
     describe('deletion of a blog', () => {
         test('succeeds with status code 204 if id is valid', async () => {
 
-            const { body: blogs } = await api.get('/api/blogs')
+            const blogs = await getBlogsInDb()
             const blogToDelete = blogs[0]
 
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
                 .expect(204)
 
-            const { body: blogsAtEnd } = await api.get('/api/blogs')
+            const blogsAtEnd = await getBlogsInDb()
 
             assert.strictEqual(blogsAtEnd.length, blogs.length - 1)
 
@@ -155,7 +155,7 @@ describe('Testing blogs api', () => {
         
         test('succeeds with valid data', async () => {
 
-            const { body: blogs } = await api.get('/api/blogs')
+            const blogs = await getBlogsInDb()
             const [, blogToUpdate ] = blogs
 
             const newBlog = { title: 'Last blog', author: 'Lili', url: 'www.last.com', likes: 5 }
@@ -165,7 +165,7 @@ describe('Testing blogs api', () => {
                 .expect(200)
                 .expect('Content-Type', /application\/json/)
     
-            const { body: blogAfter } = await api.get(`/api/blogs/${blogToUpdate.id}`)
+            const blogAfter = await getBlogByIdInDb(blogToUpdate.id)
     
             assert.strictEqual(blogAfter.likes, newBlog.likes)
             assert.deepStrictEqual(blogAfter, blogUpdated)
