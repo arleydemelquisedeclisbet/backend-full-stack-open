@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 const blogSchema = new mongoose.Schema({
     title:  { 
@@ -21,10 +21,12 @@ const blogSchema = new mongoose.Schema({
     }
 }).set('toJSON', {
     transform: (_document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString();
-        delete returnedObject._id;
-        delete returnedObject.__v;
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
     },
-});
+})
 
-export default mongoose.model('Blog', blogSchema);
+const Blog = mongoose.model('Blog', blogSchema)
+
+export default Blog
