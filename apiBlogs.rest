@@ -22,8 +22,8 @@ POST {{baseUrl}} HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Sample title",
-    "author": "Sample author",
+    "title": "Sample title3",
+    "authorId": "6625fb47644a985bccf57277",
     "url": "www.sample.com",
     "likes": 0
 }

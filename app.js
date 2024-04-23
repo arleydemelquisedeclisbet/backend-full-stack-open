@@ -3,6 +3,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 import personsRouter from './controllers/persons.js'
 import blogsRouter from './controllers/blogs.js'
+import usersRouter from './controllers/user.js'
 import { unknownEndpoint, errorHandler, recoverBody } from './utils/middlewar.js'
 import _mongoose from './models/index.js'
 
@@ -18,6 +19,8 @@ if (process.env.NODE_ENV !== 'test') {
         morgan(':method :url :status :res[content-length] - :response-time ms :body')
     )
 }
+// Router users
+app.use('/api/users', usersRouter)
 // Router persons
 app.use('/api/persons', personsRouter)
 // Router blogs

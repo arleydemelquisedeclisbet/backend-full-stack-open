@@ -4,11 +4,19 @@ const blogSchema = new mongoose.Schema({
     title:  { 
         type: String,
         minLength: [3, 'the minimum allowed length is (3)'],
-        required: [true, 'is required']
+        required: [true, 'is required'],
+        validate: {
+            validator: async title => {
+                // Validar la unicidad del campo 'title' en la colección
+                const count = await mongoose.model('Blog').countDocuments({ title });
+                return count === 0; // Debe devolver true si el campo es único
+            },
+            message: ({ value }) => `expected title '${value}' to be unique`
+        }
     },
     author:  { 
-        type: String,
-        minLength: [3, 'the minimum allowed length is (3)'],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: [true, 'is required']
     },
     url: {
@@ -21,9 +29,11 @@ const blogSchema = new mongoose.Schema({
     }
 }).set('toJSON', {
     transform: (_document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
+        const newId = returnedObject._id.toString()
         delete returnedObject._id
         delete returnedObject.__v
+
+        return { id: newId, ...returnedObject }
     },
 })
 
