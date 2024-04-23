@@ -33,18 +33,18 @@ describe('favorite blog', () => {
 
 describe('most blogs', () => {
 
-    nodeTest('get the author with the most blogs, get ({ author:string, blogs:number })', () => {
+    nodeTest('get the author with the most blogs', () => {
         const result = mostBlogs(blogs)
-        const expect = { author: 'Robert C. Martin', blogs: 3 }
+        const expect = { author: '66271ce6195dee3b2bb1aa6f', blogs: 3 }
         assert.deepStrictEqual(result, expect)
     })
 })
 
 describe('most likes', () => {
 
-    nodeTest('get the author, whose blog posts have the largest amount of likes, get ({ author:string, likes:number })', () => {
+    nodeTest('get the author, whose blog posts have the largest amount of likes', () => {
         const result = mostLikes(blogs)
-        const expect = { author: 'Edsger W. Dijkstra', likes: 17 }
+        const expect = { author: '66271cae63b347a706c26613', likes: 17 }
         assert.deepStrictEqual(result, expect)
     })
 })

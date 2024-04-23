@@ -40,5 +40,5 @@ export const mostLikes = blogs => {
 
     const [ author, likes ] = Object.entries(authoresObject).reduce((prev, current) => prev[1] > current[1] ? prev : current)
     // return the author with the most entries or likes.
-    return  { author, likes }  
+    return  { author, likes }
 }

@@ -14,7 +14,7 @@ describe('Testing nothebook api', () => {
         await Person.insertMany(initialPersons)
     })
 
-    describe('when there is initially some blogs saved', () => {
+    describe('when there is initially some persons saved', () => {
         bunTest('persons are returned as json', async () => {
             await api
                 .get('/api/persons')
@@ -28,9 +28,9 @@ describe('Testing nothebook api', () => {
         })
 
         bunTest('a specific person is within the returned phonebook', async () => {
-            const { body: blogs } = await api.get('/api/persons')
+            const { body: persons } = await api.get('/api/persons')
 
-            const titles = blogs.map(blog => blog.name)
+            const titles = persons.map(person => person.name)
             expect(titles.includes('W. Dijkstra')).toBe(true)
         })
     })
@@ -50,7 +50,7 @@ describe('Testing nothebook api', () => {
             expect(personResult).toStrictEqual(personExpected)
         })
 
-        bunTest('fails with statuscode 404 if blog does not exist', async () => {
+        bunTest('fails with statuscode 404 if person does not exist', async () => {
             const validNonexistingId = await nonExistingId()
 
             await api

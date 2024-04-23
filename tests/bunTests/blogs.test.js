@@ -32,18 +32,18 @@ describe('favorite blog', () => {
 
 describe('most blogs', () => {
 
-    bunTest('get the author with the most blogs, get ({ author:string, blogs:number })', () => {
+    bunTest('get the author with the most blogs', () => {
         const result = mostBlogs(blogs)
-        const expected = { author: 'Robert C. Martin', blogs: 3 }
+        const expected = { author: '66271ce6195dee3b2bb1aa6f', blogs: 3 }
         expect(result).toStrictEqual(expected)
     })
 })
 
 describe('most likes', () => {
 
-    bunTest('get the author, whose blog posts have the largest amount of likes, get ({ author:string, likes:number })', () => {
+    bunTest('get the author, whose blog posts have the largest amount of likes', () => {
         const result = mostLikes(blogs)
-        const expected = { author: 'Edsger W. Dijkstra', likes: 17 }
+        const expected = { author: '66271cae63b347a706c26613', likes: 17 }
         expect(result).toStrictEqual(expected)
     })
 })

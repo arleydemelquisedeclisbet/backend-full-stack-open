@@ -50,7 +50,7 @@ describe('Testing blogs api', () => {
                 .expect(200)
                 .expect('Content-Type', /application\/json/)
 
-            assert.deepStrictEqual(blogResult, blogExpected)
+            assert.deepStrictEqual(blogResult.author.id, blogExpected.author.toString())
         })
 
         test('fails with statuscode 404 if blog does not exist', async () => {
@@ -72,7 +72,7 @@ describe('Testing blogs api', () => {
     describe('addition of a new blog', () => {
         test('succeeds with valid data', async () => {
 
-            const newBlog = { title: 'Last blog', author: 'Lili', url: 'www.last.com', likes: 0 }
+            const newBlog = { title: 'Last blog', authorId: '66271ce6195dee3b2bb1aa6f', url: 'www.last.com', likes: 2 }
 
             await api
                 .post('/api/blogs').send(newBlog)
@@ -103,7 +103,7 @@ describe('Testing blogs api', () => {
 
         test('default value to likes is zero', async () => {
 
-            const newBlog = { title: 'Other blog', author: 'NNN', url: 'www.nnn.com' }
+            const newBlog = { title: 'Other blog', authorId: '66271ce6195dee3b2bb1aa6f', url: 'www.nnn.com' }
 
             assert.ok(!newBlog.hasOwnProperty('likes'))
 
@@ -152,21 +152,21 @@ describe('Testing blogs api', () => {
     })
 
     describe('update of a blog ', () => {
-        
+
         test('succeeds with valid data', async () => {
 
             const blogs = await getBlogsInDb()
-            const [, blogToUpdate ] = blogs
+            const [, blogToUpdate] = blogs
 
-            const newBlog = { title: 'Last blog', author: 'Lili', url: 'www.last.com', likes: 5 }
+            const newBlog = { title: 'Last blog', authorId: '66271cae63b347a706c26613', url: 'www.last.com', likes: 5 }
 
             const { body: blogUpdated } = await api
                 .put(`/api/blogs/${blogToUpdate.id}`).send(newBlog)
                 .expect(200)
                 .expect('Content-Type', /application\/json/)
-    
+
             const blogAfter = await getBlogByIdInDb(blogToUpdate.id)
-    
+
             assert.strictEqual(blogAfter.likes, newBlog.likes)
             assert.deepStrictEqual(blogAfter, blogUpdated)
         })

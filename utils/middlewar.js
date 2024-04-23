@@ -10,8 +10,9 @@ export const errorHandler = (error, _idreq, res, next) => {
         return res.status(400).send({ message: 'malformatted id' })
     } else if (error.name === 'ValidationError') {
         return res.status(400).send({ message: error.message })
+    } else {
+        return res.status(500).send({ message: error.message ?? 'internal server error' })
     }
-    next(error)
 }
 
 export const recoverBody = (req) => {
