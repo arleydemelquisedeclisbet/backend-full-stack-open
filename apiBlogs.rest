@@ -10,7 +10,8 @@ GET {{baseUrl}}/661ef46ab455dd55a9e36b6e HTTP/1.1
 
 ###
 # delete a blog if exist
-DELETE {{baseUrl}}/661ef46ab455dd55a9e36b6e HTTP/1.1
+DELETE {{baseUrl}}/6628a6473e4308dddb39f8b4 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY2Mjg4MjYyZTVhM2MyZTc1MzQ1MDI5OSIsImlhdCI6MTcxMzk0MjI1OSwiZXhwIjoxNzEzOTQ1ODU5fQ.CM6Bv2ZhMi_go3KyMrkRwvnfufS6ZG0pqUtuR_Zkz10
 
 ###
 # get numbers of blogs and date
