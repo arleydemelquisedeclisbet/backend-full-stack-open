@@ -2,9 +2,6 @@ import { Router } from "express"
 import Blog from "../models/blog.js"
 import { info } from "../utils/logger.js"
 import User from "../models/user.js"
-import { tokenExtractor } from "../utils/middleware.js"
-import jwt from "jsonwebtoken"
-import { SECRET } from "../utils/config.js"
 
 const blogsRouter = Router()
 
@@ -36,22 +33,9 @@ blogsRouter.get('/:id', async (req, res, next) => {
 
 blogsRouter.delete('/:id', async (req, res, next) => {
 
-    const { params: { id }, token } = req
+    const { params: { id }, user: { _id: author } } = req
 
     try {
-        const decodedToken = jwt.verify(token, SECRET)
-
-        if (!decodedToken.id) {
-            return res.status(401).send({ message: 'Token missing or invalid' })
-        }
-
-        const authorInDb = await User.findById(decodedToken.id)
-
-        if (!authorInDb) {
-            return res.status(400).send({ message: 'Author not exists' })
-        }
-
-        const { _id: author } = authorInDb
 
         const blogFound = await Blog.findById(id)
 
@@ -74,25 +58,14 @@ blogsRouter.delete('/:id', async (req, res, next) => {
 
 blogsRouter.post('', async (req, res, next) => {
 
-    const { body: { title, url, likes }, token } = req
+    const { body: { title, url, likes }, user: authorInDb } = req
 
+    const { _id: author } = authorInDb
+    
+    const newBlog = new Blog({ title, author, url, likes })
+    
     try {
 
-        const decodedToken = jwt.verify(token, SECRET)
-
-        if (!decodedToken.id) {
-            return res.status(401).send({ message: 'Token missing or invalid' })
-        }
-
-        const authorInDb = await User.findById(decodedToken.id)
-
-        if (!authorInDb) {
-            return res.status(400).send({ message: 'Author not exists' })
-        }
-
-        const { _id: author } = authorInDb
-
-        const newBlog = new Blog({ title, author, url, likes })        
         await newBlog.save()
         info(`New blog '${newBlog.title}' added`)
 

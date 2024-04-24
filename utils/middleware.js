@@ -1,4 +1,7 @@
 import { error as loggerError } from "./logger.js"
+import User from "../models/user.js"
+import jwt from "jsonwebtoken"
+import { SECRET } from "./config.js"
 
 export const unknownEndpoint = (_req, res) => {
     return res.status(404).send({ error: 'unknown endpoint' })
@@ -34,4 +37,30 @@ export const tokenExtractor = (req, _res, next) => {
         req.token = authorization.substring(7)
     }
     next()
+}
+
+export const userExtractor = async (req, res, next) => {
+
+    const { token } = req
+    
+    try {
+        const decodedToken = jwt.verify(token, SECRET)
+    
+        if (!decodedToken.id) {
+            return res.status(401).send({ message: 'Token missing or invalid' })
+        }
+    
+        const userInDb = await User.findById(decodedToken.id)
+
+        if (!userInDb) {
+            return res.status(400).send({ message: 'User not exists' })
+        }
+    
+        req.user = userInDb
+    
+        next()        
+    } catch (error) {
+        next(error)
+    }
+
 }

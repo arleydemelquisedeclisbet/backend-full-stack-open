@@ -5,7 +5,7 @@ import personsRouter from './controllers/persons.js'
 import blogsRouter from './controllers/blogs.js'
 import usersRouter from './controllers/user.js'
 import loginRouter from './controllers/login.js'
-import { unknownEndpoint, errorHandler, recoverBody, tokenExtractor } from './utils/middleware.js'
+import { unknownEndpoint, errorHandler, recoverBody, tokenExtractor, userExtractor } from './utils/middleware.js'
 import _mongoose from './models/index.js'
 
 const app = express()
@@ -29,7 +29,7 @@ app.use('/api/users', usersRouter)
 // Router persons
 app.use('/api/persons', personsRouter)
 // Router blogs
-app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs', userExtractor, blogsRouter)
 // Handle unknownEndpoint
 app.use(unknownEndpoint)
 // Handle errors
