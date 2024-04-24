@@ -1,6 +1,8 @@
 import Blog from "../models/blog.js"
 import Person from "../models/person.js"
 import User from "../models/user.js"
+import jwt from 'jsonwebtoken'
+import { SECRET } from "../utils/config.js"
 
 export const initialAuthores = [
     {
@@ -139,4 +141,9 @@ export const getUsersInDb = async () => {
 export const getUserByIdInDb = async id => {
     const user = await User.findById(id)
     return user.toJSON()
+}
+
+export const getTokenValid = () => {
+    const { _id: id, username } = initialAuthores[0]
+    return jwt.sign({ id, username }, SECRET, { expiresIn: 60 * 60 })
 }

@@ -4,9 +4,11 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../../app.js'
 import Blog from '../../models/blog.js'
-import { initialBlogs, nonExistingId, getBlogsInDb, getBlogByIdInDb } from '../test_helper.js'
+import { initialBlogs, nonExistingId, getBlogsInDb, getBlogByIdInDb, getTokenValid } from '../test_helper.js'
 
 const api = supertest(app)
+
+const validToken = getTokenValid()
 
 describe('Testing blogs api', () => {
 
@@ -70,18 +72,34 @@ describe('Testing blogs api', () => {
     })
 
     describe('addition of a new blog', () => {
+
         test('succeeds with valid data', async () => {
 
             const newBlog = { title: 'Last blog', authorId: '66271ce6195dee3b2bb1aa6f', url: 'www.last.com', likes: 2 }
 
             await api
                 .post('/api/blogs').send(newBlog)
+                .set('Authorization', `Bearer ${validToken}`)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
 
             const blogsAfter = await getBlogsInDb()
 
             assert.equal(blogsAfter.length, initialBlogs.length + 1)
+        })
+        
+        test('fails with status 401 if token not exists', async () => {
+
+            const newBlog = { title: 'Last blog', authorId: '66271ce6195dee3b2bb1aa6f', url: 'www.last.com', likes: 2 }
+
+            await api
+                .post('/api/blogs').send(newBlog)
+                .expect(401)
+                .expect('Content-Type', /application\/json/)
+
+            const blogsAfter = await getBlogsInDb()
+
+            assert.equal(blogsAfter.length, initialBlogs.length)
         })
 
         test('fails with status code 400 if data invalid', async () => {
@@ -91,11 +109,13 @@ describe('Testing blogs api', () => {
 
             await api
                 .post('/api/blogs').send(blogWithoutTitle)
+                .set('Authorization', `Bearer ${validToken}`)
                 .expect(400)
                 .expect('Content-Type', /application\/json/)
 
             await api
                 .post('/api/blogs').send(blogWithoutUrl)
+                .set('Authorization', `Bearer ${validToken}`)
                 .expect(400)
                 .expect('Content-Type', /application\/json/)
 
@@ -109,6 +129,7 @@ describe('Testing blogs api', () => {
 
             const { body: blogAdded } = await api
                 .post('/api/blogs').send(newBlog)
+                .set('Authorization', `Bearer ${validToken}`)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
 
@@ -132,6 +153,7 @@ describe('Testing blogs api', () => {
 
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
+                .set('Authorization', `Bearer ${validToken}`)
                 .expect(204)
 
             const blogsAtEnd = await getBlogsInDb()
@@ -147,6 +169,7 @@ describe('Testing blogs api', () => {
 
             await api
                 .delete(`/api/blogs/${validNonexistingId}`)
+                .set('Authorization', `Bearer ${validToken}`)
                 .expect(404)
         })
     })
