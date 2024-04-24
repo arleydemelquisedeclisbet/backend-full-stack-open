@@ -2,6 +2,7 @@ import { Router } from "express"
 import Blog from "../models/blog.js"
 import { info } from "../utils/logger.js"
 import User from "../models/user.js"
+import { userExtractor } from "../utils/middleware.js"
 
 const blogsRouter = Router()
 
@@ -31,7 +32,7 @@ blogsRouter.get('/:id', async (req, res, next) => {
     }
 })
 
-blogsRouter.delete('/:id', async (req, res, next) => {
+blogsRouter.delete('/:id', userExtractor, async (req, res, next) => {
 
     const { params: { id }, user: { _id: author } } = req
 
@@ -56,7 +57,7 @@ blogsRouter.delete('/:id', async (req, res, next) => {
     }
 })
 
-blogsRouter.post('', async (req, res, next) => {
+blogsRouter.post('', userExtractor, async (req, res, next) => {
 
     const { body: { title, url, likes }, user: authorInDb } = req
 

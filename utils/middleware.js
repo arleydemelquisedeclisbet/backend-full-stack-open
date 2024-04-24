@@ -18,7 +18,7 @@ export const errorHandler = (error, _idreq, res, _next) => {
     } else if (error.name === 'ValidationError') {
         return res.status(400).send({ message })
     } else if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-        return res.status(400).send({ message })
+        return res.status(401).send({ message })
     } else {
         return res.status(500).send({ message })
     }
