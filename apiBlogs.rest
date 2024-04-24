@@ -20,12 +20,12 @@ GET {{baseUrl}}/info
 # post a new blog
 POST {{baseUrl}} HTTP/1.1
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY2Mjg4MjYyZTVhM2MyZTc1MzQ1MDI5OSIsImlhdCI6MTcxMzk0MDM5NCwiZXhwIjoxNzEzOTQwNDU0fQ.rVwfQPrIBUeVA7IXqgmmF25ufAQ4cQHEFKteYNJnWf0
 
 {
-    "title": "Sample title3",
-    "authorId": "6625fb47644a985bccf57277",
+    "title": "Sample title33",
     "url": "www.sample.com",
-    "likes": 0
+    "likes": 5
 }
 
 ###
@@ -35,7 +35,6 @@ content-type: application/json
 
 {
     "title": "Sample title2",
-    "author": "Sample author2",
     "url": "www.sample2.com",
     "likes": 15
 }

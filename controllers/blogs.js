@@ -2,6 +2,9 @@ import { Router } from "express"
 import Blog from "../models/blog.js"
 import { info } from "../utils/logger.js"
 import User from "../models/user.js"
+import { tokenExtractor } from "../utils/middleware.js"
+import jwt from "jsonwebtoken"
+import { SECRET } from "../utils/config.js"
 
 const blogsRouter = Router()
 
@@ -25,7 +28,7 @@ blogsRouter.get('/:id', async (req, res, next) => {
 
         return blogFound
             ? res.send(blogFound)
-            : res.status(404).send('Not found')
+            : res.status(404).send({ message: 'Not found' })
     } catch (error) {
         next(error)
     }
@@ -38,7 +41,7 @@ blogsRouter.delete('/:id', async (req, res, next) => {
     try {
         return await Blog.findByIdAndDelete(id)
             ? res.status(204).end()
-            : res.status(404).send('Not found')
+            : res.status(404).send({ message: 'Not found' })
     } catch (error) {
         next(error)
     }
@@ -50,13 +53,19 @@ blogsRouter.post('', async (req, res, next) => {
 
     try {
 
-        const authorInDb = await User.findOne()
+        const decodedToken = jwt.verify(tokenExtractor(req), SECRET)
+
+        if (!decodedToken.id) {
+            return res.status(401).send({ message: 'Token missing or invalid' })
+        }
+
+        const authorInDb = await User.findById(decodedToken.id)
 
         if (!authorInDb) {
             return res.status(400).send({ message: 'Author not exists' })
         }
 
-        const { id: author } = authorInDb
+        const { _id: author } = authorInDb
 
         const newBlog = new Blog({ title, author, url, likes })        
         await newBlog.save()

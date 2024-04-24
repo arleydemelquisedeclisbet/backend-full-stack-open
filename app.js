@@ -5,7 +5,7 @@ import personsRouter from './controllers/persons.js'
 import blogsRouter from './controllers/blogs.js'
 import usersRouter from './controllers/user.js'
 import loginRouter from './controllers/login.js'
-import { unknownEndpoint, errorHandler, recoverBody } from './utils/middlewar.js'
+import { unknownEndpoint, errorHandler, recoverBody } from './utils/middleware.js'
 import _mongoose from './models/index.js'
 
 const app = express()
