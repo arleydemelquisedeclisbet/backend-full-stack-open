@@ -28,10 +28,10 @@ export const recoverBody = (req) => {
     return ' '
 }
 
-export const tokenExtractor = req => {
+export const tokenExtractor = (req, _res, next) => {
     const authorization = req.get('authorization')
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        return authorization.substring(7)
+        req.token = authorization.substring(7)
     }
-    return null
+    next()
 }

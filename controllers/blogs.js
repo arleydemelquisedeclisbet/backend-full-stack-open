@@ -49,11 +49,11 @@ blogsRouter.delete('/:id', async (req, res, next) => {
 
 blogsRouter.post('', async (req, res, next) => {
 
-    const { body: { title, url, likes } } = req
+    const { body: { title, url, likes }, token } = req
 
     try {
 
-        const decodedToken = jwt.verify(tokenExtractor(req), SECRET)
+        const decodedToken = jwt.verify(token, SECRET)
 
         if (!decodedToken.id) {
             return res.status(401).send({ message: 'Token missing or invalid' })
