@@ -25,7 +25,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node .",
     "dev": "cross-env NODE_ENV=development nodemon .",
-    "test": "cross-env NODE_ENV=test node --test tests/nodeTests/*",
+    "test": "cross-env NODE_ENV=test node --test --test-concurrency=1 ./tests/nodeTests/*",
     "start:bun": "cross-env NODE_ENV=production bun .",
     "dev:bun": "cross-env NODE_ENV=development bun --watch .",
     "test:bun": "cross-env NODE_ENV=test bun test ./tests/bunTests/users_api.test.js ./tests/bunTests/blogs.test.js ./tests/bunTests/phonebook_api.test.js ./tests/bunTests/dummy.test.js",

@@ -1,0 +1,1 @@
+export const isValidLength = (str, length) => str.length >= length

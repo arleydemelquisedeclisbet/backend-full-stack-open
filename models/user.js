@@ -3,8 +3,8 @@ import mongoose from 'mongoose'
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        minLength: [3, 'the minimum allowed length is (5)'],
-        required: true,
+        required: [true, 'is required'],
+        minLength: [3, 'the minimum allowed length is (3)'],
         validate: { // esto asegura la unicidad de username
             validator: async username => {
                 // Validar la unicidad del campo 'username' en la colección
@@ -18,7 +18,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         minLength: [5, 'the minimum allowed length is (5)']
     },
-    passwordHash: String,
+    passwordHash: {
+        type: String,
+        required: [true, 'is required'],
+        minLength: [3, 'the minimum allowed length is (3)']
+    },
     blogs: [
         {
             type: mongoose.Schema.Types.ObjectId,

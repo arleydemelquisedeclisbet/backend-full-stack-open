@@ -2,6 +2,7 @@ import { Router } from 'express'
 import User from '../models/user.js'
 import bcrypt from 'bcryptjs'
 import { info } from '../utils/logger.js'
+import { isValidLength } from '../utils/validations.js'
 
 const usersRouter = Router()
 
@@ -40,10 +41,18 @@ usersRouter.delete('/:id', async (req, res, next) => {
 usersRouter.post('/', async (req, res, next) => {
 
     const { username, name, password } = req.body
+    
+    if (!username || !password) {
+        return res.status(400).send({ message: 'username and password are required' })
+    }
 
-    const saltRounds = 10
-
+    if (!isValidLength(password, 3)) {
+        return res.status(400)
+            .send({ message: 'User validation failed: password: the minimum allowed length is (3)' })
+    }
+    
     try {
+        const saltRounds = 10
         const user = new User({
             username,
             name,
