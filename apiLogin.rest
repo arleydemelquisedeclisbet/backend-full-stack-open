@@ -1,0 +1,11 @@
+@baseUrl = http://localhost:3001/api/login
+# @baseUrl = https://backend-full-stack-open.onrender.com/api/login
+
+# Login that return token
+POST {{baseUrl}} HTTP/1.1
+content-type: application/json
+
+{
+    "username": "root",
+    "password": "salainen"
+}
