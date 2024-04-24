@@ -6,17 +6,20 @@ export const initialAuthores = [
     {
         _id: "66271cc145592ffb7e99d41b",
         username: "Michael Chan",
-        name: "Michael Chan"
+        name: "Michael Chan",
+        password: "password1"
     },
     {
         _id: "66271cae63b347a706c26613",
         username: "Edsger W. Dijkstra",
-        name: "Edsger W. Dijkstra"
+        name: "Edsger W. Dijkstra",
+        password: "password2"
     },
     {
         _id: "66271ce6195dee3b2bb1aa6f",
         username: "Robert C. Martin",
-        name: "Robert C. Martin"
+        name: "Robert C. Martin",
+        password: "password3"
     }
 
 ]

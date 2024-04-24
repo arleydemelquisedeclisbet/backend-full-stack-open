@@ -1,10 +1,8 @@
 import User from '../../models/user.js'
-import { test as nodeTest, describe, beforeEach, after } from 'node:test'
-import assert from 'node:assert'
+import { test as bunTest, afterAll, expect, beforeEach, describe } from 'bun:test'
 import { getUsersInDb, initialAuthores } from '../test_helper.js'
 import app from '../../app.js'
 import supertest from 'supertest'
-import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
 const api = supertest(app)
@@ -19,7 +17,7 @@ describe('when there is initially one user in db', () => {
         }))
     })
 
-    nodeTest('creation succeeds with a fresh username', async () => {
+    bunTest('creation succeeds with a fresh username', async () => {
         const usersAtStart = await getUsersInDb()
 
         const newUser = {
@@ -35,13 +33,11 @@ describe('when there is initially one user in db', () => {
             .expect('Content-Type', /application\/json/)
 
         const usersAtEnd = await getUsersInDb()
-        assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+        expect(usersAtEnd.length).toBe(usersAtStart.length + 1)
 
         const usernames = usersAtEnd.map(u => u.username)
-        assert(usernames.includes(newUser.username))
+        expect(usernames.includes(newUser.username)).toStrictEqual(true)
     })
 })
 
-after(async () => {
-    await mongoose.connection.close()
-})
+// La desconexión de la base de datos está en el último archivo que se ejecuta en el script
