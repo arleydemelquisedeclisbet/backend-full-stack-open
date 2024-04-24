@@ -46,14 +46,14 @@ blogsRouter.delete('/:id', async (req, res, next) => {
 
 blogsRouter.post('', async (req, res, next) => {
 
-    const { body: { title, authorId, url, likes } } = req
+    const { body: { title, url, likes } } = req
 
     try {
 
-        const authorInDb = await User.findById(authorId)
+        const authorInDb = await User.findOne()
 
         if (!authorInDb) {
-            return res.status(400).send({ message: 'Invalid author' })
+            return res.status(400).send({ message: 'Author not exists' })
         }
 
         const { id: author } = authorInDb
@@ -75,15 +75,15 @@ blogsRouter.post('', async (req, res, next) => {
 blogsRouter.put('/:id', async (req, res, next) => {
 
     const { id } = req.params
-    const { body: { title, author, url, likes } } = req
+    const { body: { title, url, likes } } = req
 
     try {
         const newBlog =  await Blog.findByIdAndUpdate(
-            id, { title, author, url, likes }, { new: true, runValidators: true, context: 'query' }
+            id, { title, url, likes }, { new: true, runValidators: true, context: 'query' }
         ).populate('author', { username: 1, name: 1 })
         return newBlog
             ? res.send(newBlog)
-            : res.status(404).send('Not found')
+            : res.status(404).send({ message: 'Not found' })
     } catch (error) {
         next(error)
     }
