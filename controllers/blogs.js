@@ -74,7 +74,7 @@ blogsRouter.post('', userExtractor, async (req, res, next) => {
         const { name: authorName } = await User.findByIdAndUpdate(author, authorInDb, { new: true })
         info(`Added ${newBlog.id} to ${authorName}'s blogs`)
 
-        res.status(201).send(newBlog)
+        res.status(201).send(await newBlog.populate('author', { username: 1, name: 1 }))
     } catch (error) {
         next(error)        
     }
